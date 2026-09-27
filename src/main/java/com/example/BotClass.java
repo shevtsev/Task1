@@ -21,12 +21,38 @@ public class BotClass extends DefaultLongPollingUpdateConsumer {
             return;
         }
 
-        SendMessage reply = SendMessage.builder()
-                .chatId(update.getMessage().getChatId())
-                .text("Пользователь написал: " + update.getMessage().getText())
+        long chatId = update.getMessage().getChatId();
+        String text = update.getMessage().getText();
+
+        String answer = switch (command(text)) {
+            case "/start" -> "Этот бот повторяет всё, что ты напишешь. Список команд: /help";
+            case "/help" -> """
+                    Доступные команды:
+                    /start - начать
+                    /help - список команд
+                    Любой другой текст повторяется""";
+            default -> "Пользователь написал: " + text;
+        };
+
+        sendText(chatId, answer);
+    }
+
+    private static String command(String text) {
+        if (!text.startsWith("/")) {
+            return "";
+        }
+        String first = text.split("\\s+", 2)[0];
+        int at = first.indexOf('@');
+        return at == -1 ? first : first.substring(0, at);
+    }
+
+    private void sendText(long chatId, String text) {
+        SendMessage message = SendMessage.builder()
+                .chatId(chatId)
+                .text(text)
                 .build();
         try {
-            telegramClient.execute(reply);
+            telegramClient.execute(message);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
