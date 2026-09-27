@@ -13,6 +13,7 @@
         <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>5.13.4</junit.version>
+        <telegrambots.version>10.3.0</telegrambots.version>
     </properties>
 
     <dependencies>
@@ -23,9 +24,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.microsoft.bot</groupId>
-            <artifactId>bot-builder</artifactId>
-            <version>4.14.3</version>
+            <groupId>org.telegram</groupId>
+            <artifactId>telegrambots-longpolling</artifactId>
+            <version>${telegrambots.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.telegram</groupId>
+            <artifactId>telegrambots-client</artifactId>
+            <version>${telegrambots.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.cdimascio</groupId>
