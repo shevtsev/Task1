@@ -1,13 +1,34 @@
 package com.example;
 
-import com.microsoft.bot.builder.ActivityHandler;
-import com.microsoft.bot.builder.TurnContext;
+import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
+import org.telegram.telegrambots.longpolling.util.DefaultLongPollingUpdateConsumer;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
-import java.util.concurrent.CompletableFuture;
+public class BotClass extends DefaultLongPollingUpdateConsumer {
 
-public class BotClass extends ActivityHandler {
+    private final TelegramClient telegramClient;
+
+    public BotClass(String botToken) {
+        this.telegramClient = new OkHttpTelegramClient(botToken);
+    }
+
     @Override
-    protected CompletableFuture<Void> onMessageActivity(TurnContext turnContext) {
-        return super.onMessageActivity(turnContext);
+    public void consume(Update update) {
+        if (!update.hasMessage() || !update.getMessage().hasText()) {
+            return;
+        }
+
+        SendMessage reply = SendMessage.builder()
+                .chatId(update.getMessage().getChatId())
+                .text("Пользователь написал: " + update.getMessage().getText())
+                .build();
+        try {
+            telegramClient.execute(reply);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
 }
